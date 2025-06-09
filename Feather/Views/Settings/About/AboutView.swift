@@ -35,39 +35,32 @@ struct AboutView: View {
                         .foregroundStyle(.accent)
                     
                     HStack(spacing: 4) {
-                        Text("Version")
+						Text(.localized("Version"))
                         Text(Bundle.main.version)
                     }
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                    
                 }
             }
             .frame(maxWidth: .infinity)
             .listRowBackground(EmptyView())
 			
 			NBSection(.localized("Credits")) {
-				if !_credits.isEmpty {
-					ForEach(_credits, id: \.self) { credit in
-						_credit(name: credit.name, desc: credit.desc, github: credit.github)
-					}
-					.transition(.slide)
+				ForEach(_credits, id: \.github) { credit in
+					_credit(name: credit.name, desc: credit.desc, github: credit.github)
 				}
+				.transition(.slide)
 			}
 			
 			NBSection(.localized("Sponsors")) {
-				if !_donators.isEmpty {
-					Group {
-						Text(try! AttributedString(markdown: _donators.map {
-							"[\($0.name ?? $0.github)](https://github.com/\($0.github))"
-						}.joined(separator: ", ")))
-						
-						Text(.localized("💜 This couldn't of been done without my sponsors!"))
-							.foregroundStyle(.secondary)
-							.padding(.vertical, 2)
-					}
-					.transition(.slide)
-				}
+				Text(try! AttributedString(markdown: _donators.map {
+					"[\($0.name ?? $0.github)](https://github.com/\($0.github))"
+				}.joined(separator: ", ")))
+				.transition(.slide)
+				
+				Text(.localized("💜 This couldn't of been done without my sponsors!"))
+					.foregroundStyle(.secondary)
+					.padding(.vertical, 2)
 			}
 		}
 		.animation(.default, value: isLoading)
@@ -122,10 +115,14 @@ extension AboutView {
 		desc: String?,
 		github: String
 	) -> some View {
-		FRIconCellView(
-			title: name ?? github,
-			subtitle: desc ?? "",
-			iconUrl: URL(string: "https://github.com/\(github).png")!
-		)
+		Button {
+			UIApplication.open("https://github.com/\(github)")
+		} label: {
+			NBTitleWithSubtitleView(
+				title: name ?? github,
+				subtitle: desc ?? "",
+				linelimit: 0
+			)
+		}
 	}
 }
