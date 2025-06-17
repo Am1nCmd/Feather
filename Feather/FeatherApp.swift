@@ -7,16 +7,17 @@
 
 import SwiftUI
 import Nuke
+import IDeviceSwift
 
 @main
 struct FeatherApp: App {
 	@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-	#if IDEVICE
+	
 	let heartbeat = HeartbeatManager.shared
-	#endif
+	
 	@StateObject var downloadManager = DownloadManager.shared
 	let storage = Storage.shared
-
+	
 	var body: some Scene {
 		WindowGroup {
 			VStack {
@@ -28,6 +29,22 @@ struct FeatherApp: App {
 					.transition(.move(edge: .top).combined(with: .opacity))
 			}
 			.animation(.smooth, value: downloadManager.manualDownloads.description)
+			.onReceive(NotificationCenter.default.publisher(for: .heartbeatInvalidHost)) { _ in
+				DispatchQueue.main.async {
+					UIAlertController.showAlertWithOk(
+						title: "InvalidHostID",
+						message: .localized("Your pairing file is invalid and is incompatible with your device, please import a valid pairing file.")
+					)
+				}
+			}
+			// dear god help me
+			.onAppear {
+				if let style = UIUserInterfaceStyle(rawValue: UserDefaults.standard.integer(forKey: "Feather.userInterfaceStyle")) {
+					UIApplication.topViewController()?.view.window?.overrideUserInterfaceStyle = style
+				}
+				
+				UIApplication.topViewController()?.view.window?.tintColor = UIColor(Color(hex: UserDefaults.standard.string(forKey: "Feather.userTintColor") ?? "#B496DC"))
+			}
 		}
 	}
 	
@@ -91,7 +108,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 		
 		ImagePipeline.shared = pipeline
 	}
-
+	
 	private func _createSourcesDirectory() {
 		let fileManager = FileManager.default
 

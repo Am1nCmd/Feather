@@ -104,16 +104,17 @@ struct LibraryView: View {
 					Text(scope.displayName).tag(scope)
 				}
 			}
+			.scrollDismissesKeyboard(.interactively)
 			.toolbar {
 				NBToolbarMenu(
 					systemImage: "plus",
 					style: .icon,
 					placement: .topBarTrailing
 				) {
-					Button(.localized("Import from Files")) {
+					Button(.localized("Import from Files"), systemImage: "folder") {
 						_isImportingPresenting = true
 					}
-					Button(.localized("Import from URL")) {
+					Button(.localized("Import from URL"), systemImage: "globe") {
 						_isDownloadingPresenting = true
 					}
 				}
@@ -141,9 +142,11 @@ struct LibraryView: View {
 						try? downloadManager.handlePachageFile(url: selectedFileURL, dl: dl)
 					}
 				)
+				.ignoresSafeArea()
 			}
 			.alert(.localized("Import from URL"), isPresented: $_isDownloadingPresenting) {
 				TextField(.localized("URL"), text: $_alertDownloadString)
+					.textInputAutocapitalization(.never)
 				Button(.localized("Cancel"), role: .cancel) {
 					_alertDownloadString = ""
 				}

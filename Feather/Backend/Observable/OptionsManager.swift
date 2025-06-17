@@ -90,12 +90,18 @@ struct Options: Codable, Equatable {
 	var removeURLScheme: Bool
 	/// If app should not include a `embedded.mobileprovision` (useful for JB detection)
 	var removeProvisioning: Bool
-	/// If app shouldn't include a "Watch Placeholder" (i.e. `Youtube Music` may include a useless app)
+	/// `Deprecated` If app shouldn't include a "Watch Placeholder" (i.e. `Youtube Music` may include a useless app)
 	var removeWatchPlaceholder: Bool
 	/// Forcefully rename string files for App name
 	var changeLanguageFilesForCustomDisplayName: Bool
-	/// If app should be Adhoc signed instead of normally signed
+	/// `Deprecated` If app should be Adhoc signed instead of normally signed
 	var doAdhocSigning: Bool
+	/// Signing options
+	var signingOption: String
+	/// Modifies app to support liquid glass
+	var experiment_supportLiquidGlass: Bool
+	/// Modifies application to use ElleKit instead of CydiaSubstrate
+	var experiment_replaceSubstrateWithEllekit: Bool
 	
 	// default
 	static let defaultOptions = Options(
@@ -119,12 +125,17 @@ struct Options: Codable, Equatable {
 		removeSupportedDevices: false,
 		removeURLScheme: false,
 		removeProvisioning: false,
-		removeWatchPlaceholder: false,
+		removeWatchPlaceholder: false, // Deprecated
 		changeLanguageFilesForCustomDisplayName: false,
-		doAdhocSigning: false
+		doAdhocSigning: false, // Deprecated
+		signingOption: signingOptionValues[0],
+		experiment_supportLiquidGlass: false, // experiments
+		experiment_replaceSubstrateWithEllekit: false // experiments
 	)
 	
-	// duplicate values are not recommended!
+	// MARK: duplicate values are not recommended!
+	
+	static let signingOptionValues = ["Default", "Adhoc"]
 	/// Default values for `appAppearance`
 	static let appAppearanceValues = ["Default", "Light", "Dark"]
 	/// Default values for `minimumAppRequirement`

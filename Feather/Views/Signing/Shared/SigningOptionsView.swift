@@ -48,6 +48,17 @@ struct SigningOptionsView: View {
 							id: \.description
 				)
 			}
+			
+			Section {
+				Self.picker(.localized("Signing Type"),
+							systemImage: "signature",
+							selection: $options.signingOption,
+							values: Options.signingOptionValues,
+							id: \.description
+				)
+			} footer: {
+				Text(.localized("Default:\nSigns an application with your specified certificate.\n\nAdhoc (Advanced):\nSigns with no identity, however this unfortunately strips entitlements (iOS won't install this type)."))
+			}
 		}
 		
 		NBSection(.localized("App Features")) {
@@ -100,12 +111,6 @@ struct SigningOptionsView: View {
 					isOn: $options.removeProvisioning,
 					temporaryValue: temporaryOptions?.removeProvisioning
 			)
-			
-			_toggle(.localized("Remove Watch Placeholder"),
-					systemImage: "applewatch.slash",
-					isOn: $options.removeWatchPlaceholder,
-					temporaryValue: temporaryOptions?.removeWatchPlaceholder
-			)
 		}
 		
 		Section {
@@ -114,14 +119,24 @@ struct SigningOptionsView: View {
 					isOn: $options.changeLanguageFilesForCustomDisplayName,
 					temporaryValue: temporaryOptions?.changeLanguageFilesForCustomDisplayName
 			)
+		} footer: {
+			Text(.localized("By default, localized titles for the app won't be changed, however this option overrides it."))
 		}
 		
-		NBSection(.localized("Advanced")) {
-			_toggle(.localized("Adhoc Signing"),
-					systemImage: "signature",
-					isOn: $options.doAdhocSigning,
-					temporaryValue: temporaryOptions?.doAdhocSigning
+		NBSection(.localized("Experiments")) {
+			_toggle(.localized("Replace Substrate with ElleKit"),
+					systemImage: "pencil",
+					isOn: $options.experiment_replaceSubstrateWithEllekit,
+					temporaryValue: temporaryOptions?.experiment_replaceSubstrateWithEllekit
 			)
+			
+			_toggle(.localized("Enable Liquid Glass"),
+					systemImage: "26.circle",
+					isOn: $options.experiment_supportLiquidGlass,
+					temporaryValue: temporaryOptions?.experiment_supportLiquidGlass
+			)
+		} footer: {
+			Text(.localized("This option force converts apps to try to use the new liquid glass redesign iOS 26 introduced, this may not work for all applications due to differing frameworks."))
 		}
 	}
 	
